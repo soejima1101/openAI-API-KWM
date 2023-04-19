@@ -1,0 +1,17 @@
+cookie:
+  expiry_days: 30
+  key: some_signature_key
+  name: some_cookie_name
+credentials:
+  usernames:
+    test:
+      email: soejima@kwm.co.jp
+      name: test user
+      password: $2b$12$xWYMqdIec8XnYheTILeOreupsDmw6eZjMYU7TCQYZ8cDhce4kjlUm
+    soejima:
+      email: soejima@kwm.co.jp
+      name: soejima
+      password: $2b$12$ireS8h40JXuwR/B2E2AhdeQg66AxHaSW6bJte0.N/zVnKBZ3ovS2a
+preauthorized:
+  emails:
+  - soejima@kwm.co.jp
