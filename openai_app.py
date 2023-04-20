@@ -36,7 +36,7 @@ def spreadsheet_access(ss_key):
   gs = gspread.authorize(c)
 
   # 共有したスプレッドシートのキーを使ってシートの情報を取得
-  # https://docs.google.com/spreadsheets/d/1u_0afQiYZ-RN3-eaPC30EsALyY_gU7gNW62ZaGZu8go/edit
+  # https://docs.google.com/spreadsheets/d/13QH_0QLI57YSXp4_4O4CtaS5T7D2cOgNUnBmgaCuFf4/edit
   workbook = gs.open_by_key(ss_key)
   
   return workbook
@@ -51,8 +51,24 @@ def spreadsheet_access(ss_key):
 def home_text():
   
   
-  st.write('', unsafe_allow_html=True)
-
+  st.write('<h4><span style="color:#c0c0c0">このアプリケーションでは、OpenAIが提供しているAPIと連携しており、ChatGPTやWhisper等の機能を利用することが可能です。</span></h4>', unsafe_allow_html=True)
+  
+  st.write('<h4><span style="color:#c0c0c0">ご利用の際は、<span style="color:#e95464">社内ルールの遵守</span>をお願いします。</span></h4>', unsafe_allow_html=True)
+  st.write("")
+  st.write("")
+  st.write("")
+  st.write("")
+  st.write("")
+  st.write("")
+  st.write("")
+  st.write("")
+  st.write("")
+  st.write("")
+  st.write("")
+  
+  image = Image.open('images/openai_logo_toka.png')
+  
+  st.image(image, use_column_width=True)
 
 
 
@@ -78,13 +94,13 @@ def chatgpt():
           temperature=1  # 温度（0-2, デフォルト1）
       )
       
-      st.write('<h7>▼ Answer</h7>', unsafe_allow_html=True)
-      st.write(res["choices"][0]["message"]["content"])
+      st.write('<h7><span style="color:#7fffd4">▼ Answer</span></h7>', unsafe_allow_html=True)
+      st.write(f'<span style="color:#7fffd4">{res["choices"][0]["message"]["content"]}</span>', unsafe_allow_html=True)
       
     except:
       st.error("回答を取得できませんでした。")
     
-  elif len(question) == 0 or question == "":
+  elif len(question) == 0:
       st.write('<h4><span style="color:#c0c0c0">質問を入力してください。</span></h4>', unsafe_allow_html=True)
 
 
@@ -143,12 +159,9 @@ def chat_mode():
                     track_color="#29B5E8"
                     )
   
-  #st.write('<h4>Please enter text.</h4>', unsafe_allow_html=True)
-  #st.write("")
-  
-  # **********
+  # ----------
   # 通常モード
-  # **********
+  # ----------
   if toggle == False:    
     question = st.text_area('▼ Question')
     st.write("")
@@ -162,18 +175,18 @@ def chat_mode():
       try:
         res = chatgpt_memory_class.chatgpt_chain.predict(human_input=question)
         
-        st.write('<h7>▼ Answer</h7>', unsafe_allow_html=True)
-        st.write(res)
+        st.write('<h7><span style="color:#7fffd4">▼ Answer</span></h7>', unsafe_allow_html=True)
+        st.write(f'<span style="color:#7fffd4">{res}</span>', unsafe_allow_html=True)
         
       except:
         st.error("回答を取得できませんでした。")
       
-    elif len(question) == 0 or question == "":
+    elif len(question) == 0:
       st.write('<h4><span style="color:#c0c0c0">質問を入力してください。</span></h4>', unsafe_allow_html=True)
   
-  # **********
+  # ----------
   # 対話モード
-  # **********
+  # ----------
   else:
     if "generated" not in st.session_state:
       st.session_state.generated = []
@@ -207,27 +220,38 @@ def chat_mode():
         except:
           st.error("メッセージを取得できませんでした。")
             
-      elif len(question) == 0 or question == "":
+      elif len(question) == 0:
         st.write('<h4><span style="color:#c0c0c0">質問を入力してください。</span></h4>', unsafe_allow_html=True)
         
-    elif len(question) == 0 or question == "":
+    elif len(question) == 0:
         st.write('<h4><span style="color:#c0c0c0">質問を入力してください。</span></h4>', unsafe_allow_html=True)
 
 
 
 # ===========================================================================================================================================
 #
-# スプレッドシート連携
+# ChatGPT会話記録／一括質問（スプレッドシート）
 #
 # ===========================================================================================================================================
 def sheets_api():
-  st.write('<h7><b><span style="color:#c0c0c0">スプレッドシートに「chatgpt@chatgpt-383502.iam.gserviceaccount.com」を共有してください。</span></b></h7>', unsafe_allow_html=True)
+  st.write("▼ Ready")
+  st.write('<h7><b><span style="color:#c0c0c0">1. 1行目にはヘッダーを設定してください。（例：A1「Human」 B1「AI」）</span></b></h7>', unsafe_allow_html=True)
+  st.write('<h7><b><span style="color:#c0c0c0">2. ご利用のスプレッドシートに、下記のアドレスを共有してください。</span></b>', unsafe_allow_html=True)
+  
+  st.markdown("""
+              ```none
+              chatgpt@chatgpt-383502.iam.gserviceaccount.com
+              ```""")
   st.write("")
   
-  user_ss_key = st.text_input("▼ スプレッドシートキーの入力 （docs.google.com/spreadsheets/d/スプレッドシートキー/edit）")
+  # Mode
+  select_mode = st.selectbox("▼ Mode", ["会話記録", "一括質問（単発）", "一括質問（連想）"])
   st.write("")
   
-  if len(user_ss_key) != 0 or user_ss_key != "":
+  user_ss_key = st.text_input("▼ SpreadSheet Key")
+  st.write("")
+  
+  if len(user_ss_key) != 0 :
     
     try:
       workbook = spreadsheet_access(user_ss_key)
@@ -238,50 +262,146 @@ def sheets_api():
       for i in range(len(worksheet_list)):
         worksheet_name_list.append(worksheet_list[i].title)
       
-      select_worksheet = st.selectbox("▼ シートを選択",worksheet_name_list)
+      select_worksheet = st.selectbox("▼ Sheet Name",worksheet_name_list)
       st.write("")
       
       worksheet = workbook.worksheet(select_worksheet)
       
-      df = pd.DataFrame(worksheet.get_values()[1:], columns=worksheet.get_values()[0])
-      
-      st.write('<h7>▼ スプレッドシートデータ（読み込み）</h7>', unsafe_allow_html=True)
-      st.dataframe(df)
-      st.write("")
-      
-      button = st.button(label="Run")
-      
-      # ボタン押下
-      if button:
-        # データフレームをリスト化
-        question_list = df.to_numpy().tolist()
+      # ---------
+      # 会話記録
+      # ---------
+      if select_mode == "会話記録" :
+        question = st.text_area("▼ Question")
+        st.write("")
+        st.write("")
         
-        openai.api_key = chatgpt_api_Key
-        
-        i = 0
-        for q in question_list:
-          question = q[0]
+        # 回答出力
+        if len(question) != 0:
+          # ChatGPT連携
+          chatgpt_memory_class = ChatGPT_Memory()
           
-          if len(question) != 0 and question != "":
-            res = openai.ChatCompletion.create(
-              model="gpt-3.5-turbo",
-              messages=[
-                {"role": "user", "content": question}
-                ],
-              temperature=1  # 温度（0-2, デフォルト1）
-            )
+          try:
+            # 回答取得
+            res = chatgpt_memory_class.chatgpt_chain.predict(human_input=question)
             
-            question_list[i][1] = (res["choices"][0]["message"]["content"])
+            st.write('<h7><span style="color:#7fffd4">▼ Answer</span></h7>', unsafe_allow_html=True)
+            st.write(f'<span style="color:#7fffd4">{res}</span>', unsafe_allow_html=True)
             
-          else:
-            question_list[i][1] = "No Answer"
+            str_list = list(filter(None, worksheet.col_values(1)))
+            next_row = str(len(str_list) + 1)
             
-          i = i + 1
+            # スプレッドシート出力
+            worksheet.update_cell(next_row, 1, question)  # 質問（Human）
+            worksheet.update_cell(next_row, 2, res) # 回答（AI）
+            
+          except:
+            st.error("回答の取得、または記録ができませんでした。")
+            
+        elif len(question) == 0:
+          st.write('<h4><span style="color:#c0c0c0">質問を入力してください。</span></h4>', unsafe_allow_html=True)
         
-        res_df = pd.DataFrame(question_list)
+      # ---------
+      # 一括質問
+      # ---------
+      else:
+        try:
+          df = pd.DataFrame(worksheet.get_values()[1:], columns=worksheet.get_values()[0])
+          
+          st.write('<h7>▼ Read Data</h7>', unsafe_allow_html=True)
+          st.dataframe(df)
+          st.write("")
+          
+          button = st.button(label="Run")
+          
+          # -----
+          # 単発
+          # -----
+          if select_mode == "一括質問（単発）":
+            # ボタン押下
+            if button:
+              # データフレームをリスト化
+              question_list = df.to_numpy().tolist()
+              
+              openai.api_key = chatgpt_api_Key
+              
+              i = 0
+              for q in question_list:
+                question = q[0]
+                
+                if len(question) != 0:
+                  res = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                      {"role": "user", "content": question}
+                      ],
+                    temperature=1  # 温度（0-2, デフォルト1）
+                  )
+                  
+                  question_list[i][1] = (res["choices"][0]["message"]["content"])
+                  
+                else:
+                  question_list[i][1] = "No Answer"
+                  
+                i = i + 1
+              
+              res_df = pd.DataFrame(question_list)
+              
+              set_with_dataframe(worksheet, res_df, row=2, include_column_header=False)
+
+          # -----
+          # 連想
+          # -----
+          elif select_mode == "一括質問（連想）":
+            # ボタン押下
+            if button:
+              # データフレームをリスト化
+              question_list = df.to_numpy().tolist()
+              
+              openai.api_key = chatgpt_api_Key
+              
+              i = 0
+              first_question = ""
+              next_question_str_1 = "私の最初の質問は「"
+              next_question_str_2 = "」でしたが、"
+              for q in question_list:
+                question = q[0]
+                
+                if len(question) != 0:
+                  # 初回限定
+                  if i == 0:
+                    first_question = question
+                    res = openai.ChatCompletion.create(
+                      model="gpt-3.5-turbo",
+                      messages=[
+                        {"role": "user", "content": question}
+                        ],
+                      temperature=1  # 温度（0-2, デフォルト1）
+                    )
+                  
+                  # 2回目以降
+                  else:
+                    res = openai.ChatCompletion.create(
+                      model="gpt-3.5-turbo",
+                      messages=[
+                        {"role": "user", "content": next_question_str_1 + first_question + next_question_str_2 +  question}
+                        ],
+                      temperature=1  # 温度（0-2, デフォルト1）
+                    )
+                    
+                  question_list[i][1] = (res["choices"][0]["message"]["content"])
+                  
+                else:
+                  question_list[i][1] = "No Answer"
+                  
+                i = i + 1
+              
+              res_df = pd.DataFrame(question_list)
+              
+              set_with_dataframe(worksheet, res_df, row=2, include_column_header=False)
+               
+        except:
+          st.error("選択されたシートにはデータが存在しません。  \n 1行目はヘッダーを設定し、2行目以降に質問を入力してください。") 
         
-        set_with_dataframe(worksheet, res_df, row=2, include_column_header=False)
-      
     except:
       st.error("スプレッドシートキーが正しくありません。")
 
@@ -304,7 +424,7 @@ def deepl_api():
   st.write("")
   st.write("")
   
-  if len(text) != 0 or text != "":
+  if len(text) != 0:
     if select_languach == "日本語 ⇒ 英語":
       try:
         params = {
@@ -341,7 +461,7 @@ def deepl_api():
       except:
         st.error("翻訳に失敗しました。")
       
-  elif len(text) == 0 or text == "":
+  elif len(text) == 0:
         st.write('<h4><span style="color:#c0c0c0">テキストを入力してください。</span></h4>', unsafe_allow_html=True)
 
 
@@ -391,10 +511,12 @@ def whisper_api():
 def image_create():
   openai.api_key = chatgpt_api_Key
   
+  # 生成画像枚数
   number_of_images = st.selectbox("▼ Number Of Images", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
   st.write("")
   
-  image_size = st.selectbox("▼ Create Image Size", ["1024x1024", "512x512", "256x256"])
+  # 画像サイズ
+  image_size = st.selectbox("▼ Image Size", ["1024x1024", "512x512", "256x256"])
   st.write("")
   
   order = st.text_area('▼ Order')
@@ -446,25 +568,21 @@ def image_create():
 # ===========================================================================================================================================
 #if __name__ == "__main__":
 def openai_app_main():
-  ss_key = "13QH_0QLI57YSXp4_4O4CtaS5T7D2cOgNUnBmgaCuFf4"
-  global workbook
+  ss_key = "13QH_0QLI57YSXp4_4O4CtaS5T7D2cOgNUnBmgaCuFf4" # API Keyを管理しているシート
+  global workbook, chatgpt_api_Key
   workbook = spreadsheet_access(ss_key)
   worksheet = workbook.worksheet("API Key")
-  global chatgpt_api_Key
   chatgpt_api_Key = worksheet.acell('A2').value
   
   # Streamlit生成
-  st.sidebar.write('<h1><span style="color:#f5deb3">OpenAI API</span> <span style="color:#c0c0c0">for</span></h1>', unsafe_allow_html=True)
+  st.sidebar.write('<h1><span style="color:#f5deb3">OpenAI API</span><span style="color:#c0c0c0"> for</span></h1>', unsafe_allow_html=True)
   
   image = Image.open('images/old_kwm_logo.png')
   
+  # kwmロゴ
   st.sidebar.image(image, use_column_width=True)
   st.sidebar.write("")
   st.sidebar.write("")
-  
-  # st.session_state.password = st.sidebar.text_input("▼ Password", type="password")
-  
-  # if st.session_state.password == "test01":
   
   # メニュー生成（bootstrap）
   # https://icons.getbootstrap.com/
@@ -472,11 +590,12 @@ def openai_app_main():
     selected = option_menu("Menu", ["Home","ChatGPT", "ChatGPT（Memory）","SpreadSheet", "DeepL", "Whisper", "Image"], 
         icons=["house-door", "chat-dots", "chat-dots-fill", "file-earmark-spreadsheet", "translate", "volume-up", "image"], menu_icon="laptop", default_index=0)
     selected
-  
+    
   st.sidebar.write("")
-  st.sidebar.write("")
   
+  # ------------
   # メニュー選択
+  # ------------
   # Home
   if selected == "Home":
     st.write('<h1><span style="color:#f5deb3">Let’s Use OpenAI API!!</span></h1>', unsafe_allow_html=True)
@@ -509,7 +628,8 @@ def openai_app_main():
   # SpreadSheet
   elif selected == "SpreadSheet":
     st.write('<h1><span style="color:#f5deb3">SpreadSheet</span></h1>', unsafe_allow_html=True)
-    st.write('<span style="color:#dcdcdc">スプレッドシートとChatGpt APIを連携します。  \n スプレッドシートに入力した質問をChatGPTが回答します。（回答はスプレッドシート出力）</span>', unsafe_allow_html=True)
+    st.write('<span style="color:#dcdcdc">ChatGPT APIとスプレッドシートを連携します。会話記録、一括質問が可能です。  \n '
+             'スプレッドシートの</span><b><span style="color:#00bfff"> A列を「質問用」</span></b>、<b><span style="color:#7fffd4">B列を「回答用」</span></b>とします。', unsafe_allow_html=True)
     st.write("")
     st.write("")
     st.write("")
@@ -529,7 +649,7 @@ def openai_app_main():
   # Whisper
   elif selected == "Whisper":
     st.write('<h1><span style="color:#f5deb3">Whisper</span></h1>', unsafe_allow_html=True)
-    st.write('<span style="color:#dcdcdc">Whisper APIを利用して、音声データを書き起こします。</span><b><span style="color:#e95464">（※変換可能サイズ：25MB）</span></b>', unsafe_allow_html=True)
+    st.write('<span style="color:#dcdcdc">Whisper APIを利用して、音声データを書き起こします。</span><b><span style="color:#e95464">（※最大のサイズ：25MB）</span></b>', unsafe_allow_html=True)
     st.write("")
     st.write("")
     st.write("")
