@@ -50,24 +50,17 @@ def spreadsheet_access(ss_key):
 # ===========================================================================================================================================
 def home_text():
   
-  
-  st.write('<h4><span style="color:#c0c0c0">このアプリケーションでは、OpenAIが提供しているAPIと連携しており、ChatGPTやWhisper等の機能を利用することが可能です。</span></h4>', unsafe_allow_html=True)
+  st.write('<h4><span style="color:#c0c0c0">このアプリケーションでは、OpenAIが提供しているOpenAI APIを連携しており、ChatGPTやWhisper等の機能を利用することが可能です。</span></h4>', unsafe_allow_html=True)
+  st.write("")
   
   st.write('<h4><span style="color:#c0c0c0">ご利用の際は、<span style="color:#e95464">社内ルールの遵守</span>をお願いします。</span></h4>', unsafe_allow_html=True)
-  st.write("")
-  st.write("")
-  st.write("")
-  st.write("")
-  st.write("")
-  st.write("")
-  st.write("")
-  st.write("")
-  st.write("")
-  st.write("")
-  st.write("")
+  st.write('<h1></h1>', unsafe_allow_html=True) # 調整用
+  st.write('<h1></h1>', unsafe_allow_html=True) # 調整用
+  st.write('<h1></h1>', unsafe_allow_html=True) # 調整用
+  st.write('<h1></h1>', unsafe_allow_html=True) # 調整用
   
-  image = Image.open('images/openai_logo_toka.png')
-  
+  # OpenAI ロゴ設定
+  image = Image.open("images/openai_logo_toka.png")
   st.image(image, use_column_width=True)
 
 
@@ -80,7 +73,7 @@ def home_text():
 def chatgpt():
   openai.api_key = chatgpt_api_Key
   
-  question = st.text_area('▼ Question')
+  question = st.text_area("▼ Question")
   st.write("")
   st.write("")
   
@@ -89,13 +82,18 @@ def chatgpt():
       res = openai.ChatCompletion.create(
           model="gpt-3.5-turbo",
           messages=[
+              {"role": "system", "content": "Your answer must be in Japanese."},
               {"role": "user", "content": question}
           ],
           temperature=1  # 温度（0-2, デフォルト1）
       )
       
-      st.write('<h7><span style="color:#7fffd4">▼ Answer</span></h7>', unsafe_allow_html=True)
-      st.write(f'<span style="color:#7fffd4">{res["choices"][0]["message"]["content"]}</span>', unsafe_allow_html=True)
+      # st.write('<h7><span style="color:#7fffd4">▼ Answer</span></h7>', unsafe_allow_html=True)
+      # st.write(f'<span style="color:#7fffd4">{res["choices"][0]["message"]["content"]}</span>', unsafe_allow_html=True)
+      st.write('<h7>▼ Answer</h7>', unsafe_allow_html=True)
+      st.write(res["choices"][0]["message"]["content"])
+      st.write("")
+      #st.write("（Total Token: " + str(res["usage"]["total_tokens"]) + "）")
       
     except:
       st.error("回答を取得できませんでした。")
@@ -154,7 +152,7 @@ def chat_mode():
                     key="Key1", 
                     default_value=False, 
                     label_after = False, 
-                    inactive_color = '#c0c0c0', 
+                    inactive_color = "#c0c0c0", 
                     active_color="#1e90ff", 
                     track_color="#29B5E8"
                     )
@@ -163,7 +161,7 @@ def chat_mode():
   # 通常モード
   # ----------
   if toggle == False:    
-    question = st.text_area('▼ Question')
+    question = st.text_area("▼ Question")
     st.write("")
     st.write("")
     
@@ -175,8 +173,10 @@ def chat_mode():
       try:
         res = chatgpt_memory_class.chatgpt_chain.predict(human_input=question)
         
-        st.write('<h7><span style="color:#7fffd4">▼ Answer</span></h7>', unsafe_allow_html=True)
-        st.write(f'<span style="color:#7fffd4">{res}</span>', unsafe_allow_html=True)
+        # st.write('<h7><span style="color:#7fffd4">▼ Answer</span></h7>', unsafe_allow_html=True)
+        # st.write(f'<span style="color:#7fffd4">{res}</span>', unsafe_allow_html=True)
+        st.write('<h7>▼ Answer</h7>', unsafe_allow_html=True)
+        st.write(res)
         
       except:
         st.error("回答を取得できませんでした。")
@@ -212,10 +212,10 @@ def chat_mode():
           st.session_state.past.append(question)
           st.session_state.generated.append(res)
           
-          if st.session_state['generated']:
-            for i in range(len(st.session_state['generated'])-1, -1, -1):
+          if st.session_state["generated"]:
+            for i in range(len(st.session_state["generated"])-1, -1, -1):
               message(st.session_state["generated"][i], key=str(i))
-              message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
+              message(st.session_state["past"][i], is_user=True, key=str(i) + "_user")
               
         except:
           st.error("メッセージを取得できませんでした。")
@@ -235,13 +235,13 @@ def chat_mode():
 # ===========================================================================================================================================
 def sheets_api():
   st.write("▼ Ready")
-  st.write('<h7><b><span style="color:#c0c0c0">1. 1行目にはヘッダーを設定してください。（例：A1「Human」 B1「AI」）</span></b></h7>', unsafe_allow_html=True)
-  st.write('<h7><b><span style="color:#c0c0c0">2. ご利用のスプレッドシートに、下記のアドレスを共有してください。</span></b>', unsafe_allow_html=True)
+  st.write('<h7><b><span style="color:#c0c0c0">1. ご利用のスプレッドシートに、下記のアドレスを共有してください。</span></b>', unsafe_allow_html=True)
   
   st.markdown("""
               ```none
               chatgpt@chatgpt-383502.iam.gserviceaccount.com
               ```""")
+  st.write('<h7><b><span style="color:#c0c0c0">2. 1行目にはヘッダーを設定してください。（例：A1「Human」 B1「AI」）</span></b></h7>', unsafe_allow_html=True)
   st.write("")
   
   # Mode
@@ -284,8 +284,10 @@ def sheets_api():
             # 回答取得
             res = chatgpt_memory_class.chatgpt_chain.predict(human_input=question)
             
-            st.write('<h7><span style="color:#7fffd4">▼ Answer</span></h7>', unsafe_allow_html=True)
-            st.write(f'<span style="color:#7fffd4">{res}</span>', unsafe_allow_html=True)
+            # st.write('<h7><span style="color:#7fffd4">▼ Answer</span></h7>', unsafe_allow_html=True)
+            # st.write(f'<span style="color:#7fffd4">{res}</span>', unsafe_allow_html=True)
+            st.write('<h7>▼ Answer</h7>', unsafe_allow_html=True)
+            st.write(res)
             
             str_list = list(filter(None, worksheet.col_values(1)))
             next_row = str(len(str_list) + 1)
@@ -307,7 +309,7 @@ def sheets_api():
         try:
           df = pd.DataFrame(worksheet.get_values()[1:], columns=worksheet.get_values()[0])
           
-          st.write('<h7>▼ Read Data</h7>', unsafe_allow_html=True)
+          st.write("<h7>▼ Read Data</h7>", unsafe_allow_html=True)
           st.dataframe(df)
           st.write("")
           
@@ -414,9 +416,9 @@ def sheets_api():
 # ===========================================================================================================================================
 def deepl_api():
   worksheet = workbook.worksheet("DeepL")
-  deepl_auth_key = worksheet.acell('A2').value
+  deepl_auth_key = worksheet.acell("A2").value
   
-  select_languach = st.selectbox("▼ Languach",["日本語 ⇒ 英語", "英語 ⇒ 日本語"])
+  select_languach = st.selectbox("▼ Languach", ["日本語 ⇒ 英語", "英語 ⇒ 日本語"])
   st.write("")
   st.write("")
   
@@ -427,11 +429,12 @@ def deepl_api():
   if len(text) != 0:
     if select_languach == "日本語 ⇒ 英語":
       try:
+        # 翻訳
         params = {
                     "auth_key": deepl_auth_key,
                     "text": text,
-                    "source_lang": 'JA',
-                    "target_lang": 'EN' 
+                    "source_lang": "JA",
+                    "target_lang": "EN" 
                 }
         # パラメータと一緒にPOSTする
         request = requests.post("https://api-free.deepl.com/v2/translate", data=params)
@@ -445,11 +448,12 @@ def deepl_api():
 
     if select_languach == "英語 ⇒ 日本語":
       try:
+        # 翻訳
         params = {
                     "auth_key": deepl_auth_key,
                     "text": text,
-                    "source_lang": 'EN',
-                    "target_lang": 'JA' 
+                    "source_lang": "EN",
+                    "target_lang": "JA" 
                 }
         # パラメータと一緒にPOSTする
         request = requests.post("https://api-free.deepl.com/v2/translate", data=params)
@@ -468,12 +472,101 @@ def deepl_api():
 
 # ===========================================================================================================================================
 #
+# Data Consideration（※不使用※）
+#
+# ===========================================================================================================================================
+def data_analysis():
+  
+  # ファイルアップロード
+  file =st.file_uploader("▼ File Upload", type=["csv"])
+
+  if file != None:
+    try:
+        df = pd.read_csv(file, encoding='cp932', engine="python")
+        st.write("")
+        st.write("")
+        
+        header_list = df.columns.values
+        header_list_copy = header_list.copy()
+        header_list_copy = header_list_copy.tolist()  # ndarray ⇒ list変換
+        
+        select_items = st.multiselect("▼ Select Item", header_list_copy)
+        
+        if len(select_items) >= 2: 
+            df = df[select_items]
+            st.write("▼ Create Data")
+            st.write(df)
+            
+            pivot_indexes = st.multiselect("▼ Select Index", select_items)
+            select_items_copy = select_items.copy()
+            
+            for del_index in pivot_indexes:
+                select_items_copy.remove(del_index)
+            
+            pivot_values = st.multiselect("▼ Select Values", select_items_copy)
+            
+            aggfunc_items = ["カウント", "合計", "平均", "最大値", "最小値"]
+            aggfunc_dic = {"カウント":"count", "合計":"sum", "平均":"mean", "最大値":"max", "最小値":"min"}
+            povot_aggfuncs = st.multiselect("▼ Select Aggregation", aggfunc_items)
+            st.write("")
+            
+            aggfunc_list = []
+            for agg in povot_aggfuncs:
+                aggfunc_list.append(aggfunc_dic[agg])
+                
+            if len(pivot_indexes) != 0 and len(pivot_values) != 0 and len(aggfunc_list) != 0:
+              try:
+                  df_pivot = pd.pivot_table(df, index=pivot_indexes, columns=None, values=pivot_values, aggfunc=aggfunc_list)
+                  df_pivot.applymap("{:,.0f}".format)
+                  
+                  st.write("▼ Pivot Table")
+                  st.dataframe(df_pivot)
+                  st.write("")
+                  st.write("")
+                  
+                  add_info = st.text_area("▼ Add Info")
+                  st.write("")
+                  
+                  analysis_button = st.button("Analysis")
+                  st.write("")
+                  st.write("")
+                  
+                  if analysis_button:
+                      openai.api_key = "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"
+                      res = openai.ChatCompletion.create(
+                          model="gpt-3.5-turbo",
+                          messages=[
+                              {"role": "system", "content": "Your answer must be in Japanese."},
+                              {"role": "user", "content": df_pivot.to_json()},
+                              {"role": "user", "content": "こちらのデータを分析してください。以下は追加情報になります。"},
+                              {"role": "user", "content": add_info}
+                          ],
+                          temperature=1  # 温度（0-2, デフォルト1）
+                      )
+                      
+                      st.write("▼ Result")
+                      st.write(res["choices"][0]["message"]["content"])
+                      st.write("")
+                      st.write("（Total Token: " + str(res["usage"]["total_tokens"]) + "）")
+                      
+              except:
+                  st.error("ピボットテーブルの作成に失敗しました。")
+                
+    except:
+        st.error("CSVファイルの読み込みに失敗しました。")
+
+
+
+
+# ===========================================================================================================================================
+#
 # Whisper API
 #
 # ===========================================================================================================================================
 def whisper_api():
   openai.api_key = chatgpt_api_Key
   
+  # 音声ファイルアップロード
   audio_file = st.file_uploader("▼ Audio File", type=["mp3", "wav"])
   st.write("")
   st.write("")
@@ -488,6 +581,7 @@ def whisper_api():
       
       if submit_btn:
         try:
+          # 書き起こし
           transcript = openai.Audio.transcribe("whisper-1", audio_file)
           st.write('<h7>▼ Text</h7>', unsafe_allow_html=True)
           st.write(transcript["text"])
@@ -512,13 +606,14 @@ def image_create():
   openai.api_key = chatgpt_api_Key
   
   # 生成画像枚数
-  number_of_images = st.selectbox("▼ Number Of Images", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  number_of_images = st.selectbox("▼ Number Of Images", list(range(1, 11, 1)))
   st.write("")
   
   # 画像サイズ
   image_size = st.selectbox("▼ Image Size", ["1024x1024", "512x512", "256x256"])
   st.write("")
   
+  # オーダー入力
   order = st.text_area('▼ Order')
   st.write("")
   st.write("")
@@ -526,6 +621,7 @@ def image_create():
   
   if len(order) != 0:
     try:
+      # 画像生成
       res = openai.Image.create(
       
       prompt = order,
@@ -534,7 +630,7 @@ def image_create():
       response_format="b64_json",
       )
       
-      st.write('▼ Create Image')
+      st.write("▼ Create Image")
       
       #images_data = []
       for data, n in zip(res["data"], range(number_of_images)):
@@ -572,14 +668,13 @@ def openai_app_main():
   global workbook, chatgpt_api_Key
   workbook = spreadsheet_access(ss_key)
   worksheet = workbook.worksheet("API Key")
-  chatgpt_api_Key = worksheet.acell('A2').value
+  chatgpt_api_Key = worksheet.acell("A2").value
   
   # Streamlit生成
   st.sidebar.write('<h1><span style="color:#f5deb3">OpenAI API</span><span style="color:#c0c0c0"> for</span></h1>', unsafe_allow_html=True)
   
-  image = Image.open('images/old_kwm_logo.png')
-  
-  # kwmロゴ
+  # KWM ロゴ設定
+  image = Image.open("images/old_kwm_logo.png")
   st.sidebar.image(image, use_column_width=True)
   st.sidebar.write("")
   st.sidebar.write("")
@@ -587,8 +682,11 @@ def openai_app_main():
   # メニュー生成（bootstrap）
   # https://icons.getbootstrap.com/
   with st.sidebar:
-    selected = option_menu("Menu", ["Home","ChatGPT", "ChatGPT（Memory）","SpreadSheet", "DeepL", "Whisper", "Image"], 
-        icons=["house-door", "chat-dots", "chat-dots-fill", "file-earmark-spreadsheet", "translate", "volume-up", "image"], menu_icon="laptop", default_index=0)
+    # selected = option_menu("Menu", ["Home","ChatGPT", "ChatGPT（Memory）","SpreadSheet", "DeepL", "Whisper", "Image"], 
+    #     icons=["house-door", "chat-dots", "chat-dots-fill", "file-earmark-spreadsheet", "translate", "volume-up", "image"], menu_icon="laptop", default_index=0)
+    # selected
+    selected = option_menu("Menu", ["Home","ChatGPT", "ChatGPT（Memory）","SpreadSheet", "DeepL", "Data Analysis（CSV）", "Whisper", "Image"], 
+        icons=["house-door", "chat-dots", "chat-dots-fill", "file-earmark-spreadsheet", "translate", "graph-up-arrow", "volume-up", "image"], menu_icon="laptop", default_index=0)
     selected
     
   st.sidebar.write("")
@@ -645,6 +743,18 @@ def openai_app_main():
     st.write("")
     
     deepl_api()
+    
+  # Data Analysis
+  elif selected == "Data Analysis（CSV）":
+    st.write('<h1><span style="color:#f5deb3">Data Analysis（CSV）</span></h1>', unsafe_allow_html=True)
+    st.write('<span style="color:#dcdcdc">ChatGPTでCSVファイルのデータ分析を行います。  \n ' 
+             'CSVファイルのデータ数が多い場合は、トークンの上限に達する可能性が高い為、  \n <b><span style="color:#7fffd4">画面上でピボットテーブルを作成</span></b>していきます。</span>  \n '
+             '<b><span style="color:#e95464">※トークンが上限に達した場合は分析することができません。</span></b>', unsafe_allow_html=True)
+    st.write("")
+    st.write("")
+    st.write("")
+    
+    data_analysis()
     
   # Whisper
   elif selected == "Whisper":
