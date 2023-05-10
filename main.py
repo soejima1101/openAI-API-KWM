@@ -20,10 +20,6 @@ import requests
 
 import base64
 
-import speech_recognition as sr
-
-from io import BytesIO
-
 
 
 # ===========================================================================================================================================
@@ -217,7 +213,10 @@ def sheets_api():
   user_ss_key = st.text_input("▼ SpreadSheet Key")
   gif = open("images/spreadsheet_key (cut).gif", "rb")
   contents = gif.read()
-  data_url = base64.b64encode(contents).decode("utf-8")
+  data_url = 
+  
+  
+  .b64encode(contents).decode("utf-8")
   gif.close()
   
   st.markdown(
@@ -391,98 +390,41 @@ def sheets_api():
 # Whisper API
 #
 # ===========================================================================================================================================
-def voice_input():
-  r = sr.Recognizer()
-  try:
-    with sr.Microphone(sample_rate=16000) as source:
-          audio = r.listen(source)
-          
-    audio_data = BytesIO(audio.get_wav_data())
-    audio_data.name = 'from_mic.wav'
-    transcript = openai.Audio.transcribe('whisper-1', audio_data)
-    text = transcript['text']
-
-    return text
-  
-  except:
-    st.error("音声データの読み込みに失敗しました。")
-
 def whisper_api():
   openai.api_key = chatgpt_api_Key
+
+  # 音声ファイルアップロード
+  audio_file = st.file_uploader("▼ Audio File", type=["mp3", "wav"])
   
-  select_mode = st.selectbox("▼ Mode", ["音声入力", "書き起こし"]) 
-  st.write("")
-  
-  # 音声入力
-  if select_mode == "音声入力":
-    text = ""
-    rec_btn = st.button("Record")
+  if audio_file != None: 
+    audio_file_size = int(audio_file.size)
+    convert_audio_file_size = round(audio_file_size / 1000000, 1)
+    
+    st.write('<h5><span style="color:#00bfff">取り込みファイルサイズ：' + str(convert_audio_file_size) + ' MB</span></h5>', unsafe_allow_html=True)
     st.write("")
     st.write("")
     
-    if rec_btn:
-      text = voice_input()
-    
-      st.text_area("▼ Audio Data", text)
-      if len(text) == 0 or text == None:
-        st.error("音声読み取り失敗")
-      else:
-        st.success("音声読み取り完了")
+    if audio_file_size <= 25000000:
+      submit_btn = st.button("Analyze")
       st.write("")
-      st.write("")
-    
-    if len(text) != 0:
-      # ChatGPT連携
-      chatgpt_memory_class = ChatGPT_Memory()
-      
-      try:
-        res = chatgpt_memory_class.chatgpt_chain.predict(human_input=text)
-  
-        st.write('<h7>▼ Answer</h7>', unsafe_allow_html=True)
-        st.write(res)
-      
-      except:
-        st.error("メッセージを取得できませんでした。")
-        
-    if len(text) == 0:
-      st.write('<h4><span style="color:#c0c0c0">「Record」を押して、マイクに向かって話しかけてください。</span></h4>', unsafe_allow_html=True)
-  
-  
-  # 書き起こし
-  if select_mode == "書き起こし":
-  
-    # 音声ファイルアップロード
-    audio_file = st.file_uploader("▼ Audio File", type=["mp3", "wav"])
-    
-    if audio_file != None: 
-      audio_file_size = int(audio_file.size)
-      convert_audio_file_size = round(audio_file_size / 1000000, 1)
-      
-      st.write('<h5><span style="color:#00bfff">取り込みファイルサイズ：' + str(convert_audio_file_size) + ' MB</span></h5>', unsafe_allow_html=True)
       st.write("")
       st.write("")
       
-      if audio_file_size <= 25000000:
-        submit_btn = st.button("Analyze")
-        st.write("")
-        st.write("")
-        st.write("")
-        
-        if submit_btn:
-          try:
-            # 書き起こし
-            transcript = openai.Audio.transcribe("whisper-1", audio_file)
-            st.write('<h7>▼ Text</h7>', unsafe_allow_html=True)
-            st.write(transcript["text"])
-            
-          except:
-            st.error("音声データの変換に失敗しました。")
-            
-      else:
-        st.error("音声ファイルのサイズが制限の25MBを超えています。")
-        
+      if submit_btn:
+        try:
+          # 書き起こし
+          transcript = openai.Audio.transcribe("whisper-1", audio_file)
+          st.write('<h7>▼ Text</h7>', unsafe_allow_html=True)
+          st.write(transcript["text"])
+          
+        except:
+          st.error("音声データの変換に失敗しました。")
+          
     else:
-      st.write('<h4><span style="color:#c0c0c0">音声ファイルをアップロードしてください。</span></h4>', unsafe_allow_html=True)
+      st.error("音声ファイルのサイズが制限の25MBを超えています。")
+      
+  else:
+    st.write('<h4><span style="color:#c0c0c0">音声ファイルをアップロードしてください。</span></h4>', unsafe_allow_html=True)
 
 
 
@@ -796,7 +738,7 @@ def openai_app_main():
   # Whisper
   elif selected == "Whisper":
     st.write('<h1><span style="color:#f5deb3">Whisper</span></h1>', unsafe_allow_html=True)
-    st.write('<span style="color:#dcdcdc">ChatGPTへの質問を音声入力で行ったり、音声データを書き起こすことが可能です。  \n '
+    st.write('<span style="color:#dcdcdc">Whisper APIを利用して音声データを書き起こすことが可能です。  \n '
              '<span style="color:#e95464">（※書き起こし可能サイズ：25MB）</span></b>', unsafe_allow_html=True)
     st.write("")
     st.write("")
