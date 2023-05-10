@@ -213,10 +213,7 @@ def sheets_api():
   user_ss_key = st.text_input("▼ SpreadSheet Key")
   gif = open("images/spreadsheet_key (cut).gif", "rb")
   contents = gif.read()
-  data_url = 
-  
-  
-  .b64encode(contents).decode("utf-8")
+  data_url = base64.b64encode(contents).decode("utf-8")
   gif.close()
   
   st.markdown(
