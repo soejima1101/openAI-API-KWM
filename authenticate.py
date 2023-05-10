@@ -1,7 +1,7 @@
 import streamlit as st
 import streamlit_authenticator as stauth
 
-from openai_app import openai_app_main
+from main import openai_app_main
 
 import yaml
 from yaml.loader import SafeLoader
