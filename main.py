@@ -424,7 +424,7 @@ def whisper_api():
       text = voice_input()
     
       st.text_area("▼ Audio Data", text)
-      if len(text) == 0:
+      if len(text) == 0 or text == None:
         st.error("音声読み取り失敗")
       else:
         st.success("音声読み取り完了")
