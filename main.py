@@ -20,6 +20,10 @@ import requests
 
 import base64
 
+import speech_recognition as sr
+
+from io import BytesIO
+
 
 
 # ===========================================================================================================================================
@@ -81,6 +85,7 @@ class ChatGPT_Memory:
     - Please output the best result based on the following constraints
 
     # Constraints
+    - Your answer must be in Japanese.
     - No important keywords are left out.
     - Keep the text concise.
     - If you cannot provide the best information, Let us know.
