@@ -20,10 +20,6 @@ import requests
 
 import base64
 
-import speech_recognition as sr
-
-from io import BytesIO
-
 
 
 # ===========================================================================================================================================
